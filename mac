@@ -132,8 +132,6 @@ fancy_echo "Updating Homebrew formulas ..."
 brew update
 
 brew_install_or_upgrade 'git'
-brew_install_or_upgrade 'postgres'
-brew_launchctl_restart 'postgresql'
 brew_install_or_upgrade 'redis'
 brew_launchctl_restart 'redis'
 brew_install_or_upgrade 'the_silver_searcher'
@@ -148,6 +146,16 @@ brew_install_or_upgrade 'node'
 
 brew_install_or_upgrade 'rbenv'
 brew_install_or_upgrade 'ruby-build'
+
+brew_tap 'caskroom/cask'
+brew_install_or_upgrade 'brew-cask'
+
+brew cask install postgres
+brew cask install java
+
+brew_install_or_upgrade 'elasticsearch'
+
+gem_install_or_update 'glub'
 
 # shellcheck disable=SC2016
 append_to_zshrc 'eval "$(rbenv init - zsh --no-rehash)"' 1
