@@ -219,10 +219,6 @@ fancy_echo "Installing foreman ..."
   sudo installer -pkg /tmp/foreman.pkg -tgt /
 ### end mac-components/heroku
 
-fancy_echo "Installing GitHub CLI client ..."
-  brew_install_or_upgrade 'hub'
-### end mac-components/github
-
 if ! command -v rcup >/dev/null; then
   brew_tap 'thoughtbot/formulae'
   brew_install_or_upgrade 'rcm'
