@@ -49,7 +49,7 @@ case "$SHELL" in
   */zsh) : ;;
   *)
     fancy_echo "Changing your shell to zsh ..."
-      chsh -s "$(which zsh)"
+#      chsh -s "$(which zsh)"
     ;;
 esac
 
@@ -113,6 +113,11 @@ gem_install_or_update() {
   fi
 }
 
+if [[ -f /etc/zshenv ]]; then
+  fancy_echo "Fixing OSX zsh environment bug ..."
+    sudo mv /etc/{zshenv,zshrc}
+fi
+
 if ! command -v brew >/dev/null; then
   fancy_echo "Installing Homebrew ..."
     curl -fsS \
@@ -122,7 +127,6 @@ if ! command -v brew >/dev/null; then
 
     # shellcheck disable=SC2016
     #append_to_zshrc 'export PATH="/usr/local/bin:$PATH"' 1
-    append_to_zshrc 'eval "$(rbenv init -)"'
     append_to_zshrc 'unsetopt correct'
     append_to_zshrc 'prompt skwp'
     append_to_zshrc 'PATH="/Applications/Postgres.app/Contents/Versions/9.3/bin:/usr/local/heroku/bin:/Users/ryan/bin:/usr/local/bin:$PATH"'
@@ -144,7 +148,7 @@ brew_install_or_upgrade 'git'
 brew_install_or_upgrade 'redis'
 brew_launchctl_restart 'redis'
 brew_install_or_upgrade 'the_silver_searcher'
-brew_install_or_upgrade 'vim'
+brew_install_or_upgrade 'mysql'
 brew_install_or_upgrade 'ctags'
 brew_install_or_upgrade 'tmux'
 brew_install_or_upgrade 'reattach-to-user-namespace'
@@ -152,6 +156,7 @@ brew_install_or_upgrade 'imagemagick'
 brew_install_or_upgrade 'qt'
 brew_install_or_upgrade 'hub'
 brew_install_or_upgrade 'node'
+brew_install_or_upgrade 'watch'
 
 brew_install_or_upgrade 'rbenv'
 brew_install_or_upgrade 'ruby-build'
@@ -161,10 +166,9 @@ brew_install_or_upgrade 'brew-cask'
 
 brew cask install postgres
 brew cask install java
+brew cask install alfred
 
 brew_install_or_upgrade 'elasticsearch'
-
-gem_install_or_update 'glub'
 
 # shellcheck disable=SC2016
 append_to_zshrc 'eval "$(rbenv init - zsh --no-rehash)"' 1
@@ -176,6 +180,9 @@ brew_install_or_upgrade 'libyaml'
 ruby_version="$(curl -sSL http://ruby.thoughtbot.com/latest)"
 
 eval "$(rbenv init - zsh)"
+
+fancy_echo "Installing rbenv-gem-rehash so the shell automatically picks up binaries after installing gems with binaries..."
+  brew_install_or_upgrade 'rbenv-gem-rehash'
 
 if ! rbenv versions | grep -Fq "$ruby_version"; then
   rbenv install -s "$ruby_version"
@@ -193,6 +200,28 @@ fancy_echo "Configuring Bundler ..."
   bundle config --global jobs $((number_of_cores - 1))
 
 brew_install_or_upgrade 'heroku-toolbelt'
+fancy_echo "Installing Suspenders, thoughtbot's Rails template ..."
+  gem install suspenders --no-document
+
+fancy_echo "Installing Parity, shell commands for development, staging, and
+production parity ..."
+  gem install parity --no-document
+
+fancy_echo "Installing glub so we can make using gitlab a little nicer" 
+  gem_install_or_update 'glub'
+### end common-components/default-gems
+
+fancy_echo "Installing the heroku-config plugin to pull config variables locally to be used as ENV variables ..."
+  heroku plugins:install git://github.com/ddollar/heroku-config.git
+
+fancy_echo "Installing foreman ..."
+  curl -sLo /tmp/foreman.pkg http://assets.foreman.io/foreman/foreman.pkg && \
+  sudo installer -pkg /tmp/foreman.pkg -tgt /
+### end mac-components/heroku
+
+fancy_echo "Installing GitHub CLI client ..."
+  brew_install_or_upgrade 'hub'
+### end mac-components/github
 
 if ! command -v rcup >/dev/null; then
   brew_tap 'thoughtbot/formulae'
