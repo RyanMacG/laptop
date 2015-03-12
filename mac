@@ -129,7 +129,7 @@ if ! command -v brew >/dev/null; then
     #append_to_zshrc 'export PATH="/usr/local/bin:$PATH"' 1
     append_to_zshrc 'unsetopt correct'
     append_to_zshrc 'prompt skwp'
-    append_to_zshrc 'PATH="/Applications/Postgres.app/Contents/Versions/9.3/bin:/usr/local/heroku/bin:/Users/ryan/bin:/usr/local/bin:$PATH"'
+    append_to_zshrc 'PATH="/Applications/Postgres.app/Contents/Versions/9.4/bin:/usr/local/heroku/bin:/Users/ryan/bin:/usr/local/bin:$PATH"'
     append_to_zshrc 'function scap() { DEPLOY_ENV=staging cap $1 --set deploy_environment="staging" --set-before deploy_environment="staging" }'
     append_to_zshrc 'export PATH="$HOME/bin:$PATH"'
     append_to_zshrc 'bindkey "^[[A" history-substring-search-up]]'
